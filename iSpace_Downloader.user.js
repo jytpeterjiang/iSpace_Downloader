@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         iSpace 课件批量查看/下载 (BNBU)
 // @namespace    https://ispace.bnbu.edu.cn/
-// @version      2.4.0
+// @version      2.5.0
 // @description  在 iSpace (BNBU Moodle) 课程页 / 文件夹(page-folder) / 页面(page) / 资源(resource) 页面统一查看并批量下载课件。支持在课程主页内联展开文件夹与页面，无需跳转；下载不经油猴通道，文件名与扩展名完整保留。
 // @author       Peter Jiang
 // @match        https://ispace.bnbu.edu.cn/course/view.php*
@@ -76,6 +76,7 @@
         #ispace-dl-panel .badge.folder { background: #fff8c5; color: #9a6700; }
         #ispace-dl-panel .badge.page { background: #dafbe1; color: #1a7f37; }
         #ispace-dl-panel .badge.resource { background: #ffdcd7; color: #cf222e; }
+        #ispace-dl-panel .badge.assign { background: #ffe2cc; color: #b35900; }
         #ispace-dl-panel .item a { color: #0969da; text-decoration: none; }
         #ispace-dl-panel .item a:hover { text-decoration: underline; }
         #ispace-dl-panel .status { font-size: 11px; color: #6e7781; min-width: 52px; text-align: right; }
@@ -382,7 +383,8 @@
         regionMain.querySelectorAll('li.section.course-section').forEach(sec => {
             const items = [];
             sec.querySelectorAll('li.activity').forEach(li => {
-                const a = li.querySelector('div.activityname > a');
+                // 兼容标准列表 (div.activityname) 与卡片格式 (div.activity-name)
+                const a = li.querySelector('div.activityname > a, div.activity-name > a');
                 if (!a) return;
                 const href = a.getAttribute('href');
                 if (!href) return;
@@ -392,12 +394,22 @@
                 else if (/\/mod\/folder\//.test(href)) kind = 'folder';
                 else if (/\/mod\/page\//.test(href)) kind = 'page';
                 else if (/\/mod\/url\//.test(href)) kind = 'url';
-                else return; // 忽略论坛 / 作业 / 测验等
+                else if (/\/mod\/assign\//.test(href)) kind = 'assign';
+                else return; // 忽略论坛 / 测验等
 
+                // 名称：优先 .instancename；没有时用链接文本并剥掉 .accesshide 与模块类型后缀
                 const inst = a.querySelector('.instancename');
-                const name = sanitize(inst
-                    ? inst.cloneNode(true).textContent.replace(/\s*(File|Folder|Page|URL)\s*$/i, '').trim()
-                    : a.textContent.trim()) || '未命名活动';
+                let nameText;
+                if (inst) {
+                    nameText = inst.cloneNode(true).textContent;
+                } else {
+                    const clone = a.cloneNode(true);
+                    clone.querySelectorAll('.accesshide').forEach(s => s.remove());
+                    nameText = clone.textContent;
+                }
+                const name = sanitize(
+                    nameText.replace(/\s*(File|Folder|Page|URL|Assignment|作业|Quiz|Forum|测验|讨论)\s*$/i, '').trim()
+                ) || '未命名活动';
                 const url = absUrl(href, location.href);
                 if (url) items.push({ name, url, kind });
             });
@@ -430,9 +442,9 @@
     }
 
     // ---------- UI ----------
-    const BADGE = { folder: '文件夹', page: '页面', resource: '文件', url: '链接' };
+    const BADGE = { folder: '文件夹', page: '页面', resource: '文件', assign: '作业', url: '链接' };
     // 需要点进去才能拿到真实文件的类型
-    const CONTAINER = { folder: 1, page: 1, resource: 1 };
+    const CONTAINER = { folder: 1, page: 1, resource: 1, assign: 1 };
 
     /** 根据当前 dirHandle 刷新「保存目录」按钮的文案与状态 */
     function updateDirButton(panel) {

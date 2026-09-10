@@ -11,7 +11,7 @@
 ## 功能特性
 
 - **统一视图**：课程主页右下角浮动面板，按章节列出全部课件资源
-- **多类型识别**：在课程主页就能识别并展示 `文件 / 文件夹 / 页面 / 链接` 四种活动类型，每种用不同 badge 标识（红 / 黄 / 绿 / 蓝）
+- **多类型识别**：在课程主页就能识别并展示 `文件 / 文件夹 / 页面 / 作业 / 链接` 五种活动类型，每种用不同 badge 标识
 - **就地展开**：对于 `文件夹` / `页面` / `资源` 条目，点行前的 `▸` 箭头即可**就地展开内部所有真实文件**，不必跳转新页面
 - **跟随任意相关页面**：在 `mod/folder/view.php`、`mod/page/view.php`、`mod/resource/view.php`、`mod/assign/view.php` 页面打开时同样生效，自动列出当前页内全部文件
 - **批量下载**：一键解析每个文件的真实直链（含带签名 token 的 pluginfile URL），逐个取回内容保存，并在面板显示进度与每个文件的状态
@@ -96,7 +96,7 @@ https://ispace.bnbu.edu.cn/course/view.php?id=10407
 
 | 页面 | 自动行为 |
 |---|---|
-| `course/view.php` | 按章节分组，列 `文件 / 文件夹 / 页面 / 链接` |
+| `course/view.php` | 按章节分组，列 `文件 / 文件夹 / 页面 / 作业 / 链接` |
 | `mod/folder/view.php` | 列出该文件夹内全部真实文件（含子文件夹里的） |
 | `mod/page/view.php` | 列出页面正文内所有附件与内嵌图片 |
 | `mod/resource/view.php` | 解析出该资源的真实文件直链，可立即下载 |
@@ -232,6 +232,13 @@ fetch('/mod/resource/view.php?id=X')
 ---
 
 ## 更新记录
+
+### v2.5.0
+
+- **课程主页支持作业活动**：在课程主页上识别并展示 `作业（assign）` 类型，带 `▸` 标记为容器，点开即取该作业页的全部附件（直接复用 v2.4.0 的 mod/assign 解析）
+- **兼容卡片格式**：DOM 选择器从 `div.activityname > a` 放宽为 `div.activityname > a, div.activity-name > a`，覆盖 Moodle 4.x 的 `format_cards` 等卡片视图
+- **名称提取更健壮**：当缺少 `.instancename` span 时（如卡片格式），自动剥掉 `.accesshide` 节点与模块类型后缀（`File / Folder / Page / URL / Assignment / 作业 / Quiz / Forum / 测验 / 讨论`）
+- **新增橙色 badge**：作业条目在面板上以橙色 `作业` badge 标识
 
 ### v2.4.0
 

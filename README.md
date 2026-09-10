@@ -13,7 +13,7 @@
 - **统一视图**：课程主页右下角浮动面板，按章节列出全部课件资源
 - **多类型识别**：在课程主页就能识别并展示 `文件 / 文件夹 / 页面 / 链接` 四种活动类型，每种用不同 badge 标识（红 / 黄 / 绿 / 蓝）
 - **就地展开**：对于 `文件夹` / `页面` / `资源` 条目，点行前的 `▸` 箭头即可**就地展开内部所有真实文件**，不必跳转新页面
-- **跟随任意相关页面**：在 `mod/folder/view.php`、`mod/page/view.php`、`mod/resource/view.php` 页面打开时同样生效，自动列出当前页内全部文件
+- **跟随任意相关页面**：在 `mod/folder/view.php`、`mod/page/view.php`、`mod/resource/view.php`、`mod/assign/view.php` 页面打开时同样生效，自动列出当前页内全部文件
 - **批量下载**：一键解析每个文件的真实直链（含带签名 token 的 pluginfile URL），逐个取回内容保存，并在面板显示进度与每个文件的状态
 - **文件名完整保留**：以直链末段作为权威来源，缺扩展名时自动补齐（`view.php` 直接吐文件时按 MIME 补后缀），同名文件自动追加 ` (2)`
 - **识别 302 直链**：`mod/resource` 的"强制下载"展示方式会把 `view.php` 整体 302 到文件本体，脚本能正确解析，不再出现"面板上有名字但解析不出文件"
@@ -100,6 +100,7 @@ https://ispace.bnbu.edu.cn/course/view.php?id=10407
 | `mod/folder/view.php` | 列出该文件夹内全部真实文件（含子文件夹里的） |
 | `mod/page/view.php` | 列出页面正文内所有附件与内嵌图片 |
 | `mod/resource/view.php` | 解析出该资源的真实文件直链，可立即下载 |
+| `mod/assign/view.php` | 列出作业页中的全部附件（含教师在 intro / additional files 添加的模板与资料） |
 
 ---
 
@@ -231,6 +232,11 @@ fetch('/mod/resource/view.php?id=X')
 ---
 
 ## 更新记录
+
+### v2.4.0
+
+- **新增作业页面支持**：在 `mod/assign/view.php` 打开时自动识别并列出作业页内的全部附件（教师在 intro / additional files 添加的模板与资料，与 `mod/page` / `mod/resource` 同样走 `pluginfile.php` 链接，文件名解析、重命名、目录分层等全部沿用）
+- 关联变更：补全 `@match` / `getPageType()` / `collectCurrentPage()` / 面板 typeLabel 四个点
 
 ### v2.3.0
 

@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         iSpace 课件批量查看/下载 (BNBU)
 // @namespace    https://ispace.bnbu.edu.cn/
-// @version      2.3.0
+// @version      2.4.0
 // @description  在 iSpace (BNBU Moodle) 课程页 / 文件夹(page-folder) / 页面(page) / 资源(resource) 页面统一查看并批量下载课件。支持在课程主页内联展开文件夹与页面，无需跳转；下载不经油猴通道，文件名与扩展名完整保留。
 // @author       Peter Jiang
 // @match        https://ispace.bnbu.edu.cn/course/view.php*
 // @match        https://ispace.bnbu.edu.cn/mod/folder/view.php*
 // @match        https://ispace.bnbu.edu.cn/mod/page/view.php*
 // @match        https://ispace.bnbu.edu.cn/mod/resource/view.php*
+// @match        https://ispace.bnbu.edu.cn/mod/assign/view.php*
 // @grant        none
 // @run-at       document-idle
 // ==/UserScript==
@@ -106,6 +107,7 @@
         if (/\/mod\/folder\/view\.php/.test(p)) return 'folder';
         if (/\/mod\/page\/view\.php/.test(p)) return 'page';
         if (/\/mod\/resource\/view\.php/.test(p)) return 'resource';
+        if (/\/mod\/assign\/view\.php/.test(p)) return 'assign';
         return 'other';
     }
 
@@ -415,7 +417,12 @@
     function collectCurrentPage(type) {
         const files = extractFiles(document, location.href);
         if (!files.length) return [];
-        const title = { folder: '文件夹内容', page: '页面内文件', resource: '资源文件' }[type] || '文件';
+        const title = {
+            folder: '文件夹内容',
+            page: '页面内文件',
+            resource: '资源文件',
+            assign: '作业附件'
+        }[type] || '文件';
         return [{
             title: pageTitle(title),
             items: files.map(f => ({ name: f.name, url: f.url, kind: 'file' }))
@@ -473,7 +480,7 @@
 
         const total = groups.reduce((s, g) => s + g.items.length, 0);
         const isCourse = type === 'course';
-        const typeLabel = { course: '课程主页', folder: '文件夹页面', page: '页面', resource: '资源页面' }[type] || '';
+        const typeLabel = { course: '课程主页', folder: '文件夹页面', page: '页面', resource: '资源页面', assign: '作业页面' }[type] || '';
 
         panel.innerHTML = `
             <header>

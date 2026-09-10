@@ -2,7 +2,7 @@
 
 一个油猴脚本（Tampermonkey / Greasemonkey），在 [iSpace](https://ispace.bnbu.edu.cn) 课程页面**统一查看**课程资料，并**批量下载**真实课件文件到本地 —— 文件名完整保留、目录结构可按课程 / 章节自动组织，全程不弹油猴确认页。
 
-支持在课程主页内联展开 `文件夹` / `页面` / `资源` 条目，无需跳转新页面即可获取其中所有真实文件。
+支持在课程主页内联展开 `文件夹` / `页面` / `资源` / `作业` 条目，无需跳转新页面即可获取其中所有真实文件。
 
 ![面板预览](intro.png)
 
@@ -11,7 +11,7 @@
 ## 功能特性
 
 - **统一视图**：课程主页右下角浮动面板，按章节列出全部课件资源
-- **多类型识别**：在课程主页就能识别并展示 `文件 / 文件夹 / 页面 / 作业 / 链接` 五种活动类型，每种用不同 badge 标识
+- **多类型识别**：在课程主页就能识别并展示 `文件 / 文件夹 / 页面 / 作业 / 链接` 五种活动类型，每种用不同 badge 标识（红 / 黄 / 绿 / 橙 / 蓝）
 - **就地展开**：对于 `文件夹` / `页面` / `资源` 条目，点行前的 `▸` 箭头即可**就地展开内部所有真实文件**，不必跳转新页面
 - **跟随任意相关页面**：在 `mod/folder/view.php`、`mod/page/view.php`、`mod/resource/view.php`、`mod/assign/view.php` 页面打开时同样生效，自动列出当前页内全部文件
 - **批量下载**：一键解析每个文件的真实直链（含带签名 token 的 pluginfile URL），逐个取回内容保存，并在面板显示进度与每个文件的状态
@@ -106,20 +106,23 @@ https://ispace.bnbu.edu.cn/course/view.php?id=10407
 
 ## 实际效果展示
 
-下图为本脚本在课程主页的运行效果（保存目录已设为本地文件夹 `test`，已批量下载 6 个文件，"按课程 / 章节建子文件夹" 开启）：
+下图为本脚本在课程主页的运行效果（保存目录已设为本地文件夹 `AI_Business`，"按课程 / 章节建子文件夹" 开启）：
 
 ![面板预览](intro.png)
 
 可以注意到：
 
-- 标题栏显示 `iSpace 课件 (11)` —— 当前页面共 11 个可下载/可查看项
-- 右上角「保存目录」按钮显示为目录名 `test`（未设置时显示「保存目录」；不支持的浏览器显示「目录不可用」）
-- 4 个章节：`IMPORTANT COURSE MATERIALS (1)` / `LECTURE SLIDES (1)` / `AI-Powered Learning Platforms (2)` / `Recommended Reading (6)`
-- `Important Course Materials` 是**文件夹**（黄色 badge），前面带 `▸`，展开后可看到内部 PDF
-- `AIB Week 1 Session 1` 是**文件**（红色 badge），前面带 `▸` 是因为它本身是 `resource` 容器
-- `AIB Enterprise Workspace` / `AIDE platform` 是**链接**（蓝色 badge）—— 这是 `mod/url` 活动，**只可点击打开外链，不能下载**（外链不是文件）
-- `BCG Report` / `BCG questions` / `MIT Report` / `2026-The Age of the AI Supply Chain` 都是**文件**（红色 badge），状态列显示 `✓ 已保存`，表示已写入 `test/<课程名>/<章节名>/<文件>`
-- 底部「按「课程 / 章节」建子文件夹」默认勾选，文件会按课程名 / 章节名自动分层到 `test` 下
+- 标题栏显示 `iSpace 课件 (25)` —— 当前页面共 25 个可下载/可查看项（包括作业）
+- 右上角「保存目录」按钮显示为目录名 `AI_Business`（未设置时显示「保存目录」；不支持的浏览器显示「目录不可用」）
+- `Case Journals Folder: Class Participation (1%)` 章节下出现 5 个**橙色 `作业` badge** 条目 —— 这是 `mod/assign` 活动（v2.5.0 起在课程主页也支持识别，兼容卡片格式）。点 `▸` 即可展开拿到该作业 intro / additional files 中的模板与资料
+- 作业状态列可能显示：
+  - `1 个文件` —— 已点 `▸` 解析过作业页，但还没批量下载
+  - `✓ 已保存` —— 文件已写入 `AI_Business/<课程名>/Case Journals Folder_ Class Participation (1%)/<作业名>/<文件>`
+  - `空` —— 作业页内没有可下载附件
+- `Important Course Materials` / `Group Project Information, Instructions and Guidelines` 是**文件夹**（黄色 badge）
+- `AIB Week 1 Session 1` / `AIB Week 2 Session 1` / `AIB Week 2 Session @` 是**文件**（红色 badge），前面带 `▸` 是因为它们本身是 `resource` 容器，展开后能看到内部真实 PDF
+- `ROI Exercises` 是**文件**（红色 badge），状态 `✓ 已保存`
+- 底部「按「课程 / 章节」建子文件夹」默认勾选，文件会按课程名 / 章节名自动分层到 `AI_Business` 下；带括号的章节名（如 `(1%)`）会一并作为子目录名保留
 
 ---
 

@@ -234,6 +234,19 @@ fetch('/mod/resource/view.php?id=X')
 
 ---
 
+## 本地测试
+
+脚本用 [jsdom](https://github.com/jsdom/jsdom) 做回归测试，覆盖文件名解析、容器解析（302 直链 / redirect 兜底）、页面识别（课程主页 / 作业页）、下载落盘（目录写入 / 子文件夹 / 重复下载）四层。
+
+```bash
+npm install      # 首次：安装 jsdom（仅 devDependency，脚本本身零依赖）
+npm test         # 运行全部回归测试
+```
+
+测试环境只在本机安装一次即可（`node_modules/` 已加入 `.gitignore`，不入库）。当前 46 项断言全绿。
+
+---
+
 ## 更新记录
 
 ### v2.5.0

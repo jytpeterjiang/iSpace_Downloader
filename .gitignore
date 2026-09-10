@@ -1,0 +1,13 @@
+# 依赖（本地保留，不入库）
+node_modules/
+
+# 临时/本地文件
+.commitmsg.txt
+*.log
+*.tmp
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

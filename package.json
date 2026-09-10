@@ -1,0 +1,12 @@
+{
+  "name": "ispace-downloader",
+  "version": "2.5.0",
+  "private": true,
+  "description": "iSpace (BNBU Moodle) 课件批量查看/下载油猴脚本 —— 本地 jsdom 回归测试",
+  "scripts": {
+    "test": "node test/download.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}
